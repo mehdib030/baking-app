@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Baking App</string>
+
+    <!-- Recipe -->
+    <string name="recipe_name">Name:</string>
+    <string name="recipe_servings">Servings:</string>
+    <string name="recipe_image">Image:</string>
+
+    <!-- Step -->
+    <string name="step_short_description">Short Description:</string>
+    <string name="step_description">Description:</string>
+    <string name="step_video_url">Video Url:</string>
+    <string name="step_thumbnail_url">Thumbnail Url:</string>
+
+    <!-- Ingredient -->
+    <string name="ingredient_quantity">Quantity:</string>
+    <string name="ingredient_measure">Measure:</string>
+    <string name="ingredient_name">Ingredient Name:</string>
+
+
+</resources>
