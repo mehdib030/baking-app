@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.e.baking.model.Recipe;
@@ -37,7 +36,6 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
     @NonNull
     @Override
     public RecipeRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        //View view = mLayoutInflater.inflate(R.layout.linearlayout_recipes,parent,false);
         View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.linearlayout_recipes,parent,false);
         return new ViewHolder(view);
     }
@@ -85,6 +83,10 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
 
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+    }
+
+    RecyclerView.Adapter getAdapter(){
+        return this;
     }
 
 }

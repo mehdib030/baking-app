@@ -5,12 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.e.baking.model.Ingredient;
-import com.e.baking.model.Recipe;
 import com.e.baking.model.Step;
 
 import java.util.List;

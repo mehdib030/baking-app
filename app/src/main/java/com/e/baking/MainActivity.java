@@ -1,17 +1,28 @@
 package com.e.baking;
 
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.GridView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.e.baking.model.Ingredient;
 import com.e.baking.model.Recipe;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,17 +38,31 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity implements RecipeRecyclerViewAdapter.ItemClickListener{
+public class MainActivity extends AppCompatActivity implements RecipeRecyclerViewAdapter.ItemClickListener {//implements MasterListFragment.OnImageClickListener{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private List<Recipe> recipes;
-    @BindView(R.id.recipe_recycler_view)public RecyclerView recyclerView;
+    @BindView(R.id.recipe_recycler_phone_view)
+    @Nullable
+    public RecyclerView recyclerView;
+
+
+    @BindView(R.id.recipe_recycler_tablet_view)
+    @Nullable
+    public RecyclerView recyclerTabletView;
+
+    private boolean isTwoPanel;
 
 
     private List<Recipe> recipeList = new ArrayList();
 
     private RecipeRecyclerViewAdapter recipeRecyclerViewAdapter;
+
+    // Track whether to display a two-pane or single-pane UI
+    // A single-pane display refers to phone screens, and two-pane to larger tablet screens
+    private boolean mTwoPane;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +84,13 @@ public class MainActivity extends AppCompatActivity implements RecipeRecyclerVie
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.i(TAG,"You clicked on "+recipeRecyclerViewAdapter.getItem(position)+ " at position "+position);
-        launchDetailActivity(position);
+        //Log.i(TAG,"You clicked on "+recipeRecyclerViewAdapter.getItem(position)+ " at position "+position);
+        if(isTwoPanel){
+            launchDetailActivity(position);
+        } else {
+            launchDetailActivity(position);
+        }
+
     }
 
     public class RecipesAsyncTask extends AsyncTask<String,Integer, List<Recipe>>{
@@ -81,16 +111,35 @@ public class MainActivity extends AppCompatActivity implements RecipeRecyclerVie
             super.onPostExecute(recipes);
 
             if(recipes != null){
+                if(recyclerView != null) {
 
-                final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+                    isTwoPanel = false;
 
-                recyclerView.setLayoutManager(linearLayoutManager);
+                    final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
 
-                recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(recipes,recipes.size(),MainActivity.this);
+                    recyclerView.setLayoutManager(linearLayoutManager);
 
-                recipeRecyclerViewAdapter.setClickListener(MainActivity.this);
+                    recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(recipes,recipes.size(),MainActivity.this);
 
-                recyclerView.setAdapter(recipeRecyclerViewAdapter);
+                    recipeRecyclerViewAdapter.setClickListener(MainActivity.this);
+
+                    recyclerView.setAdapter(recipeRecyclerViewAdapter);
+
+                } else {
+                    isTwoPanel=true;
+
+                    final GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this,2);
+
+                    recyclerTabletView.setLayoutManager(gridLayoutManager);
+
+                    recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(recipes,recipes.size(),MainActivity.this);
+
+                    recipeRecyclerViewAdapter.setClickListener(MainActivity.this);
+
+                    recyclerTabletView.setAdapter(recipeRecyclerViewAdapter);
+                }
+
+
             }
         }
     }
@@ -135,12 +184,30 @@ public class MainActivity extends AppCompatActivity implements RecipeRecyclerVie
      * @param position
      */
     private void launchDetailActivity(int position) {
+        Recipe recipe = recipeList.get(position);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(recipe);
+
+        editor.putString("recipe", json);
+        editor.commit();
+
+        Intent intent1 = new Intent(this, RecipeWidgetProvider.class);
+        intent1.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+        // since it seems the onUpdate() is only fired on that:
+        int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), RecipeWidgetProvider.class));
+        //)getAppWidgetI‌​ds(new ComponentName(getApplication(), RecipeWidgetProvider.class));
+        intent1.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+
+        sendBroadcast(intent1);
+
         Intent intent = new Intent(this, RecipeDetailsActivity.class);
         intent.putExtra(RecipeDetailsActivity.EXTRA_POSITION,position);
-        Recipe recipe = recipeList.get(position);
         intent.putExtra("recipe", recipe);
         startActivity(intent);
     }
-
 
 }

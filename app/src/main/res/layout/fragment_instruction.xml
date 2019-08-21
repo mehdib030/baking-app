@@ -5,8 +5,8 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/step_card_view"
-        android:layout_height="50dp"
+
+        android:layout_height="150dp"
         android:layout_width="400dp"
         android:layout_margin="5dp"
         >
@@ -17,11 +17,11 @@
             <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="@string/step_short_description"
+                android:text="@string/step_description"
                 android:textStyle="bold"
                 />
             <TextView
-                android:id="@+id/step_short_description"
+                android:id="@+id/step_description"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 />
