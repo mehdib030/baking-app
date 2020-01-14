@@ -37,7 +37,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+/**
+ * Baking app main activity class
+ */
 public class MainActivity extends AppCompatActivity implements RecipeRecyclerViewAdapter.ItemClickListener {//implements MasterListFragment.OnImageClickListener{
 
     private static final String TAG = MainActivity.class.getSimpleName();
