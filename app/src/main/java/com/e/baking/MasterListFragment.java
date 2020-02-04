@@ -204,14 +204,6 @@ public class MasterListFragment extends Fragment implements RecipeRecyclerViewAd
     @Override
     public void onItemClick(View view, int position) {
 
-       /* MasterListFragment fragment = MasterListFragment.newInstance("","");
-        fragment.setSteps(steps);
-        fragment.setRecipe(recipe);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.master_list_fragment,
-                        fragment,
-                .commit();*/
-
        mCallback.onStepSelected(steps,position);
     }
 
